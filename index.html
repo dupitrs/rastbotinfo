@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RAST e-pastu bots — kā tas strādā</title>
+<title>RAST e-pastu sistēma — pilns ceļvedis</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
     --bg:#0A0A0C; --card:#131318; --card2:#17171e;
     --text:#F4F0E9; --muted:#A7A2AE; --faint:#6E6A77;
     --accent:#FF4A2E; --line:rgba(244,240,233,.09); --line2:rgba(244,240,233,.14);
-    --ok:#4ADE80;
+    --ok:#4ADE80; --blue:#6CA0FF;
     --display:'Bricolage Grotesque','Inter','Helvetica Neue',Arial,sans-serif;
     --body:'Inter','Helvetica Neue',Arial,sans-serif;
   }
@@ -20,191 +20,373 @@
   html{scroll-behavior:smooth}
   body{
     background:radial-gradient(1200px 600px at 50% -10%,#16121a 0%,var(--bg) 55%) no-repeat,var(--bg);
-    color:var(--text);font-family:var(--body);line-height:1.6;
-    -webkit-font-smoothing:antialiased;padding:0 18px;
+    color:var(--text);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased;padding:0 18px;
   }
-  .wrap{max-width:1000px;margin:0 auto;padding:56px 0 80px}
-  .logo{font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:-.02em}
+  .wrap{max-width:1040px;margin:0 auto;padding:52px 0 90px}
+  a{color:var(--accent)}
+  .logo{font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:-.02em}
   .logo span{color:var(--accent)}
-  .eyebrow{color:var(--accent);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin:38px 0 10px}
-  h1{font-family:var(--display);font-weight:600;font-size:clamp(34px,6vw,56px);line-height:1.08;letter-spacing:-.02em;margin-bottom:18px}
+  .eyebrow{color:var(--accent);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin:34px 0 10px}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(32px,5.5vw,52px);line-height:1.08;letter-spacing:-.02em;margin-bottom:16px}
   h1 .hl{color:var(--accent)}
-  .lead{font-size:clamp(17px,2.4vw,21px);color:var(--muted);max-width:680px}
-  h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,4vw,32px);letter-spacing:-.01em;margin-bottom:6px}
-  h2 .num{color:var(--accent);margin-right:10px}
-  section{margin-top:64px}
-  .sub{color:var(--muted);margin-bottom:26px;max-width:680px}
+  .lead{font-size:clamp(16px,2.2vw,20px);color:var(--muted);max-width:720px}
+  h2{font-family:var(--display);font-weight:600;font-size:clamp(23px,3.6vw,30px);letter-spacing:-.01em;margin-bottom:8px}
+  section{margin-top:60px;scroll-margin-top:20px}
+  .sub{color:var(--muted);margin-bottom:24px;max-width:720px}
+  .status-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(74,222,128,.08);
+    border:1px solid rgba(74,222,128,.3);color:var(--ok);border-radius:100px;padding:6px 14px;font-size:13px;font-weight:600;margin-top:20px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(74,222,128,.15)}
+
+  /* TOC */
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+  .toc a{display:inline-block;font-size:13.5px;color:var(--muted);text-decoration:none;
+    background:var(--card);border:1px solid var(--line);border-radius:100px;padding:7px 15px}
+  .toc a:hover{border-color:var(--accent);color:var(--text)}
 
   /* TL;DR */
   .tldr{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line2);
-    border-radius:20px;padding:26px 28px;margin-top:32px;display:flex;gap:18px;align-items:flex-start}
-  .tldr .ic{font-size:30px;line-height:1}
+    border-radius:20px;padding:24px 26px;margin-top:30px;display:flex;gap:16px;align-items:flex-start}
+  .tldr .ic{font-size:28px;line-height:1}
+  .tldr p{color:var(--muted);font-size:16.5px}
   .tldr b{color:var(--text)}
-  .tldr p{color:var(--muted);font-size:17px}
 
-  /* Flow */
-  .flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:14px;margin-top:8px}
-  .step{flex:1 1 200px;background:var(--card);border:1px solid var(--line);border-radius:18px;
-    padding:24px 22px;position:relative;min-width:200px}
-  .step .badge{width:42px;height:42px;border-radius:12px;background:rgba(255,74,46,.12);
-    border:1px solid rgba(255,74,46,.35);display:flex;align-items:center;justify-content:center;
-    font-size:22px;margin-bottom:14px}
-  .step .n{position:absolute;top:18px;right:20px;font-family:var(--display);font-weight:700;
-    font-size:30px;color:rgba(244,240,233,.10)}
-  .step h3{font-family:var(--display);font-weight:600;font-size:18px;margin-bottom:6px}
-  .step p{color:var(--muted);font-size:14.5px}
-  .arrow{align-self:center;color:var(--accent);font-size:24px;flex:0 0 auto}
-  @media(max-width:760px){.arrow{transform:rotate(90deg);align-self:center;width:100%;text-align:center}}
-  .loopnote{margin-top:16px;color:var(--faint);font-size:14px;display:flex;align-items:center;gap:8px}
-  .loopnote .lp{color:var(--accent)}
+  /* Diagram */
+  .diagram{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-top:8px;overflow-x:auto}
+  .diagram svg{display:block;width:100%;min-width:680px;height:auto}
+  .legend{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 26px;margin-top:18px}
+  @media(max-width:680px){.legend{grid-template-columns:1fr}}
+  .legend div{font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
+  .legend .b{display:inline-flex;width:22px;height:22px;flex:0 0 auto;border-radius:50%;
+    background:rgba(255,74,46,.14);border:1px solid rgba(255,74,46,.4);color:var(--accent);
+    font-weight:700;font-size:12px;align-items:center;justify-content:center;margin-top:1px}
 
-  /* Decision checklist */
-  .checks{display:grid;grid-template-columns:1fr;gap:10px;counter-reset:c}
-  .check{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
-    border-radius:14px;padding:16px 18px}
-  .check .q{width:30px;height:30px;border-radius:9px;background:rgba(74,222,128,.10);
-    border:1px solid rgba(74,222,128,.3);color:var(--ok);display:flex;align-items:center;justify-content:center;
-    font-weight:700;flex:0 0 auto;font-size:15px}
-  .check b{display:block;font-size:15.5px}
-  .check span{color:var(--muted);font-size:14px}
-  .checks .final{border-color:rgba(255,74,46,.35);background:rgba(255,74,46,.06)}
-  .checks .final .q{background:rgba(255,74,46,.14);border-color:rgba(255,74,46,.4);color:var(--accent)}
+  /* Bots */
+  .bots{display:grid;grid-template-columns:1fr;gap:16px}
+  .bot{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;
+    display:grid;grid-template-columns:54px 1fr;gap:18px;align-items:start}
+  .bot .ico{width:54px;height:54px;border-radius:14px;background:rgba(255,74,46,.12);
+    border:1px solid rgba(255,74,46,.35);display:flex;align-items:center;justify-content:center;font-size:26px}
+  .bot h3{font-family:var(--display);font-weight:600;font-size:19px;margin-bottom:4px}
+  .bot .file{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--faint)}
+  .bot p{color:var(--muted);font-size:15px;margin:10px 0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .meta span{font-size:12.5px;background:rgba(244,240,233,.05);border:1px solid var(--line2);
+    border-radius:8px;padding:4px 10px;color:var(--text)}
+  .meta b{color:var(--accent);font-weight:600}
 
-  /* Control cards */
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-  @media(max-width:680px){.grid{grid-template-columns:1fr}}
-  .ctl{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
-  .ctl .ic{font-size:24px;margin-bottom:10px}
-  .ctl h3{font-family:var(--display);font-weight:600;font-size:17px;margin-bottom:5px}
-  .ctl p{color:var(--muted);font-size:14.5px}
-  .pill{display:inline-block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;
-    background:rgba(244,240,233,.06);border:1px solid var(--line2);border-radius:7px;
-    padding:2px 9px;color:var(--text);margin:0 2px}
+  /* Infra table */
+  .infra{display:grid;grid-template-columns:1fr;gap:0;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .infra .r{display:grid;grid-template-columns:200px 1fr;gap:16px;padding:16px 20px;border-top:1px solid var(--line)}
+  .infra .r:first-child{border-top:none}
+  .infra .r .k{font-weight:600;font-size:15px;display:flex;gap:9px;align-items:center}
+  .infra .r .v{color:var(--muted);font-size:14.5px}
+  .infra code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:rgba(244,240,233,.06);padding:1px 6px;border-radius:5px;color:var(--text)}
+  @media(max-width:620px){.infra .r{grid-template-columns:1fr;gap:4px}}
 
-  /* Safety */
-  .safe{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-  @media(max-width:680px){.safe{grid-template-columns:1fr}}
-  .safe li{list-style:none;background:var(--card);border:1px solid var(--line);border-radius:14px;
-    padding:18px 20px;display:flex;gap:12px;align-items:flex-start}
-  .safe .ic{color:var(--ok);font-size:18px;flex:0 0 auto;margin-top:2px}
-  .safe b{font-size:15px}
-  .safe p{color:var(--muted);font-size:14px;margin-top:2px}
+  /* explainer callout */
+  .callout{background:rgba(108,160,255,.06);border:1px solid rgba(108,160,255,.28);border-radius:16px;padding:22px 24px;margin-top:8px}
+  .callout h3{font-family:var(--display);font-weight:600;font-size:18px;margin-bottom:8px;color:var(--text)}
+  .callout p{color:var(--muted);font-size:15px;margin-top:8px}
+  .callout .pillrow{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .callout .step{font-size:13px;background:rgba(108,160,255,.1);border:1px solid rgba(108,160,255,.3);color:#bcd2ff;border-radius:8px;padding:5px 11px}
 
-  /* Stats */
-  .stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px}
-  .stat{flex:1 1 150px;background:linear-gradient(180deg,var(--card2),var(--card));
-    border:1px solid var(--line);border-radius:16px;padding:22px 24px;text-align:center}
-  .stat .big{font-family:var(--display);font-weight:700;font-size:40px;color:var(--accent);line-height:1}
-  .stat .lbl{color:var(--muted);font-size:13.5px;margin-top:8px}
+  /* guide */
+  .guide{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:680px){.guide{grid-template-columns:1fr}}
+  .g{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .g h4{font-family:var(--display);font-weight:600;font-size:15.5px;margin-bottom:5px}
+  .g p{color:var(--muted);font-size:14px}
+  .pill{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:rgba(244,240,233,.06);border:1px solid var(--line2);border-radius:6px;padding:1px 7px;color:var(--text)}
 
-  footer{margin-top:72px;padding-top:28px;border-top:1px solid var(--line);
-    color:var(--faint);font-size:13.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  /* lifecycle */
+  .life{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:6px}
+  .life .st{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:14px;min-width:120px}
+  .life .st b{display:block;font-family:ui-monospace,monospace;font-size:12.5px;color:var(--accent);margin-top:3px}
+  .life .ar{color:var(--accent);font-size:18px}
+
+  /* stats */
+  .stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:6px}
+  .stat{flex:1 1 150px;background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:16px;padding:20px 22px;text-align:center}
+  .stat .big{font-family:var(--display);font-weight:700;font-size:34px;color:var(--accent);line-height:1}
+  .stat .lbl{color:var(--muted);font-size:13px;margin-top:8px}
+
+  footer{margin-top:74px;padding-top:26px;border-top:1px solid var(--line);color:var(--faint);font-size:13.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
   footer .tag{font-style:italic}
-  .status-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(74,222,128,.08);
-    border:1px solid rgba(74,222,128,.3);color:var(--ok);border-radius:100px;padding:6px 14px;
-    font-size:13px;font-weight:600;margin-top:22px}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(74,222,128,.15)}
+  /* SVG box helpers */
+  .dg-box{fill:var(--card2);stroke:rgba(244,240,233,.16);stroke-width:1}
+  .dg-zone{fill:rgba(244,240,233,.02);stroke:rgba(244,240,233,.10);stroke-width:1;stroke-dasharray:4 4}
+  .dg-acc{fill:rgba(255,74,46,.10);stroke:rgba(255,74,46,.4)}
+  .dg-t{fill:var(--text);font-family:var(--body);font-weight:600;font-size:14px}
+  .dg-s{fill:var(--muted);font-family:var(--body);font-size:11.5px}
+  .dg-z{fill:var(--faint);font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.12em}
+  .dg-line{stroke:var(--accent);stroke-width:2;fill:none}
+  .dg-num{fill:var(--accent);font-family:var(--body);font-weight:700;font-size:12px}
+  .dg-numbg{fill:#0A0A0C;stroke:var(--accent);stroke-width:1}
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="logo">rast<span>.</span></div>
+  <div class="eyebrow">E-pastu sistēma · pilns ceļvedis</div>
+  <h1>Kā strādā <span class="hl">RAST roboti</span></h1>
+  <p class="lead">Šī lapa no nulles izskaidro visu sistēmu: kas ir 3 roboti, ko katrs dara, kur viss atrodas, kā tas darbojas uz GitHub serveriem, un kā tu to vadi. Nekas nav jāzina iepriekš.</p>
+  <div class="status-chip"><span class="dot"></span> Sistēma ieslēgta un strādā · 3 roboti aktīvi</div>
 
-  <div class="eyebrow">Automātiskais e-pastu sūtītājs</div>
-  <h1>Kā strādā <span class="hl">RAST bots</span></h1>
-  <p class="lead">Bots pats sūta personalizētus e-pastus potenciālajiem klientiem — pa nedaudziem dienā, darba laikā — kamēr tu dari citas lietas. Tu visu vadi vienā Google tabulā.</p>
-  <div class="status-chip"><span class="dot"></span> Ieslēgts · sūta katru dienu 10:00–16:00</div>
-
-  <!-- TL;DR -->
-  <div class="tldr">
-    <div class="ic">💡</div>
-    <p><b>Vienkārši sakot:</b> tu ieliec kontaktus Google tabulā un uzliec „sūtīt". Robots katru dienu paņem dažus nesūtītos cilvēkus, nosūta katram piemērotu vēstuli, un atzīmē „nosūtīts". Skaits aug pakāpeniski (5, 6, 7, 8…), lai sargātu reputāciju. Nekādu sarakstu, nekādu pogu spiešanas — viss notiek pats.</p>
+  <div class="toc">
+    <a href="#kopskats">Kopskats</a>
+    <a href="#diagramma">Diagramma</a>
+    <a href="#boti">3 roboti</a>
+    <a href="#actions">Kas ir GitHub Actions</a>
+    <a href="#kur">Kur viss atrodas</a>
+    <a href="#cels">Viena kontakta ceļš</a>
+    <a href="#celvedis">Lietotāja ceļvedis</a>
+    <a href="#izmaksas">Izmaksas & drošība</a>
   </div>
 
-  <!-- FLOW -->
-  <section>
-    <h2>Kā tas notiek — 4 soļi</h2>
-    <p class="sub">Šis cikls atkārtojas pats no sevis, kamēr tabulā ir nesūtīti kontakti.</p>
-    <div class="flow">
-      <div class="step">
-        <span class="n">1</span>
-        <div class="badge">📋</div>
-        <h3>Google tabula</h3>
-        <p>Tu pievieno kontaktus un uzliec „aktīvs = jā". Tā ir tava vadības pults.</p>
+  <!-- TL;DR -->
+  <div class="tldr" id="kopskats">
+    <div class="ic">💡</div>
+    <p><b>Vienā teikumā:</b> tu vadi visu vienā Google tabulā; GitHub serveros fonā strādā 3 nelieli roboti, kas paši sūta personalizētus e-pastus, apstrādā atbildes un uztur sistēmu dzīvu — bez tava datora, bez tavas klātbūtnes.</p>
+  </div>
+
+  <!-- DIAGRAM -->
+  <section id="diagramma">
+    <h2>Kā viss savienojas</h2>
+    <p class="sub">Augšējā josla = e-pastu <b>sūtīšana</b>. Apakšējā = <b>atbilžu</b> apstrāde. Cipari atbilst skaidrojumam zem diagrammas.</p>
+    <div class="diagram">
+      <svg viewBox="0 0 940 470" role="img" aria-label="Sistēmas arhitektūras diagramma">
+        <defs>
+          <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" fill="#FF4A2E"></path>
+          </marker>
+        </defs>
+
+        <!-- zones -->
+        <rect class="dg-zone" x="8" y="40" width="300" height="400" rx="14"></rect>
+        <text class="dg-z" x="24" y="62">TU · GOOGLE</text>
+        <rect class="dg-zone" x="330" y="40" width="300" height="400" rx="14"></rect>
+        <text class="dg-z" x="346" y="62">GITHUB (MĀKONIS)</text>
+        <rect class="dg-zone" x="652" y="40" width="280" height="400" rx="14"></rect>
+        <text class="dg-z" x="668" y="62">E-PASTS</text>
+
+        <!-- TOP BAND: sending -->
+        <!-- Tu -->
+        <rect class="dg-box" x="28" y="92" width="120" height="56" rx="12"></rect>
+        <text class="dg-t" x="88" y="118" text-anchor="middle">👤 Tu</text>
+        <text class="dg-s" x="88" y="134" text-anchor="middle">vadi tabulā</text>
+        <!-- Tabula -->
+        <rect class="dg-box" x="168" y="86" width="128" height="120" rx="12"></rect>
+        <text class="dg-t" x="232" y="108" text-anchor="middle">📋 Google tabula</text>
+        <text class="dg-s" x="232" y="128" text-anchor="middle">kontakti</text>
+        <text class="dg-s" x="232" y="146" text-anchor="middle">iestatijumi</text>
+        <text class="dg-s" x="232" y="164" text-anchor="middle">log · atbildes</text>
+        <text class="dg-s" x="232" y="190" text-anchor="middle" style="fill:#6CA0FF">vadības pults + dati</text>
+        <!-- Sūtītājs -->
+        <rect class="dg-box dg-acc" x="352" y="92" width="150" height="56" rx="12"></rect>
+        <text class="dg-t" x="427" y="116" text-anchor="middle">⏰ Sūtītājs</text>
+        <text class="dg-s" x="427" y="133" text-anchor="middle">katru dienu 10–16</text>
+        <!-- Gmail (send) -->
+        <rect class="dg-box" x="676" y="92" width="120" height="56" rx="12"></rect>
+        <text class="dg-t" x="736" y="116" text-anchor="middle">📧 Gmail</text>
+        <text class="dg-s" x="736" y="133" text-anchor="middle">raivis@rastdsgn.lv</text>
+        <!-- Kontakti (top) -->
+        <rect class="dg-box" x="820" y="92" width="98" height="56" rx="12"></rect>
+        <text class="dg-t" x="869" y="116" text-anchor="middle">🧑 Kontakti</text>
+        <text class="dg-s" x="869" y="133" text-anchor="middle">saņēmēji</text>
+
+        <!-- BOTTOM BAND: replies -->
+        <!-- rast.studija -->
+        <rect class="dg-box" x="168" y="300" width="128" height="56" rx="12"></rect>
+        <text class="dg-t" x="232" y="324" text-anchor="middle">📨 rast.studija</text>
+        <text class="dg-s" x="232" y="341" text-anchor="middle">pārsūtītās atbildes</text>
+        <!-- Atbilžu bots -->
+        <rect class="dg-box dg-acc" x="352" y="300" width="150" height="56" rx="12"></rect>
+        <text class="dg-t" x="427" y="324" text-anchor="middle">✉️ Atbilžu bots</text>
+        <text class="dg-s" x="427" y="341" text-anchor="middle">reizi stundā 24/7</text>
+        <!-- Gmail inbox -->
+        <rect class="dg-box" x="676" y="300" width="120" height="56" rx="12"></rect>
+        <text class="dg-t" x="736" y="324" text-anchor="middle">📧 iesūtne</text>
+        <text class="dg-s" x="736" y="341" text-anchor="middle">IMAP</text>
+        <!-- Kontakti (bottom) -->
+        <rect class="dg-box" x="820" y="300" width="98" height="56" rx="12"></rect>
+        <text class="dg-t" x="869" y="324" text-anchor="middle">🧑 atbild</text>
+
+        <!-- repo feeding actions -->
+        <rect class="dg-box" x="352" y="404" width="150" height="30" rx="9"></rect>
+        <text class="dg-s" x="427" y="423" text-anchor="middle">⚙️ GitHub repo — kods</text>
+        <path class="dg-line" d="M427,404 L427,360" marker-end="url(#ah)"></path>
+        <path class="dg-line" d="M427,300 L427,150" marker-end="url(#ah)" opacity="0.5"></path>
+
+        <!-- arrows TOP (1 Tu→tabula, 2 tabula→sūtītājs, 3 sūtītājs→gmail, 4 gmail→kontakti) -->
+        <path class="dg-line" d="M148,120 L166,120" marker-end="url(#ah)"></path>
+        <circle class="dg-numbg" cx="157" cy="120" r="9"></circle><text class="dg-num" x="157" y="124" text-anchor="middle">1</text>
+
+        <path class="dg-line" d="M296,120 L350,120" marker-end="url(#ah)"></path>
+        <circle class="dg-numbg" cx="323" cy="120" r="9"></circle><text class="dg-num" x="323" y="124" text-anchor="middle">2</text>
+
+        <path class="dg-line" d="M502,120 L674,120" marker-end="url(#ah)"></path>
+        <circle class="dg-numbg" cx="588" cy="120" r="9"></circle><text class="dg-num" x="588" y="124" text-anchor="middle">3</text>
+
+        <path class="dg-line" d="M796,120 L818,120" marker-end="url(#ah)"></path>
+        <circle class="dg-numbg" cx="807" cy="120" r="9"></circle><text class="dg-num" x="807" y="124" text-anchor="middle">4</text>
+
+        <!-- 5 kontakti(top)→kontakti(bottom) down -->
+        <path class="dg-line" d="M869,148 L869,298" marker-end="url(#ah)"></path>
+        <circle class="dg-numbg" cx="869" cy="223" r="9"></circle><text class="dg-num" x="869" y="227" text-anchor="middle">5</text>
+
+        <!-- 6 kontakti(bottom)→iesūtne ; 7 iesūtne→atbilžu bots -->
+        <path class="dg-line" d="M818,328 L798,328" marker-end="url(#ah)"></path>
+        <circle class="dg-numbg" cx="808" cy="328" r="9"></circle><text class="dg-num" x="808" y="332" text-anchor="middle">6</text>
+
+        <path class="dg-line" d="M674,328 L504,328" marker-end="url(#ah)"></path>
+        <circle class="dg-numbg" cx="589" cy="328" r="9"></circle><text class="dg-num" x="589" y="332" text-anchor="middle">7</text>
+
+        <!-- 8 atbilžu bots→rast.studija (forward) -->
+        <path class="dg-line" d="M352,328 L298,328" marker-end="url(#ah)"></path>
+        <circle class="dg-numbg" cx="325" cy="328" r="9"></circle><text class="dg-num" x="325" y="332" text-anchor="middle">8</text>
+
+        <!-- 9 atbilžu bots→tabula (status) up-left elbow -->
+        <path class="dg-line" d="M360,312 L320,312 L320,206" marker-end="url(#ah)" opacity="0.85"></path>
+        <circle class="dg-numbg" cx="320" cy="260" r="9"></circle><text class="dg-num" x="320" y="264" text-anchor="middle">9</text>
+      </svg>
+    </div>
+    <div class="legend">
+      <div><span class="b">1</span> Tu pievieno kontaktus un ieslēdz sūtīšanu tabulā.</div>
+      <div><span class="b">2</span> Sūtītājs nolasa iestatījumus + nākamo nesūtīto kontaktu.</div>
+      <div><span class="b">3</span> Nosūta personalizētu e-pastu caur Gmail (SMTP).</div>
+      <div><span class="b">4</span> E-pasts nonāk pie kontakta (saņēmēja).</div>
+      <div><span class="b">5</span> Kontakts atbild — atbilde aiziet atpakaļ uz iesūtni.</div>
+      <div><span class="b">6</span> Atbilde nonāk Gmail iesūtnē.</div>
+      <div><span class="b">7</span> Atbilžu bots izlasa iesūtni (IMAP).</div>
+      <div><span class="b">8</span> Ja atbilde nav "nē" → pārsūta uz rast.studija@gmail.com.</div>
+      <div><span class="b">9</span> Atzīmē statusu tabulā (izslegts vai atbildeja).</div>
+    </div>
+  </section>
+
+  <!-- 3 BOTS -->
+  <section id="boti">
+    <h2>3 roboti — kas ko dara</h2>
+    <p class="sub">Visi trīs ir mazas Python programmas, kas dzīvo vienā GitHub repo un palaižas paši uz GitHub serveriem pēc grafika.</p>
+    <div class="bots">
+      <div class="bot">
+        <div class="ico">⏰</div>
+        <div>
+          <h3>1. Sūtītājs</h3>
+          <div class="file">sender_job.py</div>
+          <p>Galvenais robots. Katrā palaišanā paņem <b>nākamo nesūtīto</b> kontaktu, izvēlas pareizo vēstuli pēc profesijas, personalizē ar vārdu, nosūta un atzīmē „nosūtīts". Sūta pa vienam ar pauzēm; dienas skaits pakāpeniski aug (5, 6, 7, 8…), lai sargātu reputāciju.</p>
+          <div class="meta">
+            <span><b>Kad:</b> katru dienu, 10:00–16:00, ~ik stundu viens</span>
+            <span><b>Kur:</b> GitHub Actions</span>
+            <span><b>Aiztiek:</b> tabula + Gmail (sūta)</span>
+          </div>
+        </div>
       </div>
-      <div class="arrow">→</div>
-      <div class="step">
-        <span class="n">2</span>
-        <div class="badge">🤖</div>
-        <h3>Robots pamostas</h3>
-        <p>Pēc grafika (katru dienu 10–16) robots ielūkojas tabulā un pārbauda noteikumus.</p>
+      <div class="bot">
+        <div class="ico">✉️</div>
+        <div>
+          <h3>2. Atbilžu bots</h3>
+          <div class="file">replies_job.py</div>
+          <p>Lasa Gmail iesūtni un reaģē uz kontaktu atbildēm. Atbild „nē" → atzīmē <b>izslegts</b> (vairs nesūtīs). Atbild ko citu → atzīmē <b>atbildeja</b> un <b>pārsūta vēstuli uz rast.studija@gmail.com</b>. Aiztiek tikai zināmus kontaktus; neapstrādā divreiz; izlaiž atvaļinājuma auto-atbildes.</p>
+          <div class="meta">
+            <span><b>Kad:</b> reizi stundā, 24/7</span>
+            <span><b>Kur:</b> GitHub Actions</span>
+            <span><b>Aiztiek:</b> Gmail (lasa) + tabula + pārsūta</span>
+          </div>
+        </div>
       </div>
-      <div class="arrow">→</div>
-      <div class="step">
-        <span class="n">3</span>
-        <div class="badge">✉️</div>
-        <h3>Sūta vienu vēstuli</h3>
-        <p>Paņem nākamo nesūtīto, izvēlas pareizo vēstuli pēc profesijas, personalizē ar vārdu un nosūta.</p>
-      </div>
-      <div class="arrow">→</div>
-      <div class="step">
-        <span class="n">4</span>
-        <div class="badge">✅</div>
-        <h3>Atzīmē „nosūtīts"</h3>
-        <p>Ieraksta tabulā statusu un datumu, lai tam pašam cilvēkam nesūtītu otrreiz.</p>
+      <div class="bot">
+        <div class="ico">🔄</div>
+        <div>
+          <h3>3. Keepalive</h3>
+          <div class="file">keepalive.yml</div>
+          <p>Mazs palīgs. GitHub automātiski <b>atslēdz</b> grafikus pēc 60 dienām bez aktivitātes. Šis reizi mēnesī izdara sīku izmaiņu repo, lai sistēma neapstātos pati no sevis. Tu par to nedomā — tas dara pats.</p>
+          <div class="meta">
+            <span><b>Kad:</b> reizi mēnesī</span>
+            <span><b>Kur:</b> GitHub Actions</span>
+            <span><b>Aiztiek:</b> tikai repo (sīks commit)</span>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="loopnote"><span class="lp">↻</span> …un pēc brīža atkal no 1. soļa — līdz dienas norma sasniegta vai visi nosūtīti.</div>
   </section>
 
-  <!-- DECISION -->
-  <section>
-    <h2>Kā robots izlemj, vai sūtīt</h2>
-    <p class="sub">Katru reizi, kad pamostas, robots iziet šo sarakstu. Ja kāds nosacījums neizpildās — tas neko nesūta un mierīgi aiziet gulēt.</p>
-    <div class="checks">
-      <div class="check"><div class="q">1</div><div><b>Vai sūtīšana ieslēgta?</b><span>Tabulā jābūt „aktivs = jā". Citādi — guļ.</span></div></div>
-      <div class="check"><div class="q">2</div><div><b>Vai šodien drīkst sūtīt?</b><span>Pašlaik sūta katru dienu, arī brīvdienās (vajadzības gadījumā var ierobežot tikai uz darba dienām).</span></div></div>
-      <div class="check"><div class="q">3</div><div><b>Vai tagad ir 10:00–16:00?</b><span>Sūta tikai cilvēcīgā darba laikā (pēc Rīgas laika).</span></div></div>
-      <div class="check"><div class="q">4</div><div><b>Vai šodien vēl nav sasniegta norma?</b><span>Skaits aug katru dienu: 5, 6, 7, 8… Kad sasniegts — apstājas līdz rītdienai.</span></div></div>
-      <div class="check"><div class="q">5</div><div><b>Vai pagājis pietiekami laika kopš pēdējās?</b><span>Tur ~stundu starp vēstulēm, lai izklīstu pa dienu, nevis visas uzreiz.</span></div></div>
-      <div class="check final"><div class="q">✓</div><div><b>Viss kārtībā → sūta vienu vēstuli</b><span>Tieši vienu, tad atzīmē un gaida nākamo reizi.</span></div></div>
+  <!-- WHAT IS GITHUB ACTIONS -->
+  <section id="actions">
+    <h2>Kas ir „GitHub Actions" (vienkārši)</h2>
+    <div class="callout">
+      <h3>☁️ Bezmaksas mākoņa dators, kas pieder GitHub</h3>
+      <p>Roboti <b>nestrādā uz tava datora</b> — tavam datoram nav jābūt ieslēgtam. Tā vietā GitHub pēc grafika uz dažām sekundēm ieslēdz īslaicīgu datoru savos serveros, lejupielādē mūsu kodu, palaiž to un izslēdz. Tas notiek pats, fonā, visu diennakti.</p>
+      <div class="pillrow">
+        <span class="step">1 · Pienāk grafika laiks</span>
+        <span class="step">2 · GitHub ieslēdz īslaicīgu datoru</span>
+        <span class="step">3 · Lejupielādē kodu no repo</span>
+        <span class="step">4 · Palaiž robotu (~30 sek)</span>
+        <span class="step">5 · Izslēdz datoru</span>
+      </div>
+      <p style="margin-top:14px">Grafiku nosaka „cron" izteiksme (piem. „katru stundu"). Robots katrā palaišanā pats izlemj, vai šobrīd kaut ko darīt — pārbaudot iestatījumus tabulā.</p>
     </div>
   </section>
 
-  <!-- CONTROL -->
-  <section>
-    <h2>Ko tu vari kontrolēt</h2>
-    <p class="sub">Viss notiek Google tabulā — nekas nav „jāprogrammē". Izmaiņas stājas spēkā nākamajā reizē, kad robots pamostas.</p>
-    <div class="grid">
-      <div class="ctl"><div class="ic">🟢</div><h3>Ieslēgt / apturēt</h3><p>Cilnē <i>iestatijumi</i>: <span class="pill">aktivs = jā</span> lai sūta, <span class="pill">nē</span> lai apturētu — jebkurā brīdī.</p></div>
-      <div class="ctl"><div class="ic">⚙️</div><h3>Cik dienā (aug pats)</h3><p>Sākas ar <span class="pill">5</span> un aug <span class="pill">+1</span> katru dienu (warmup). Vari uzlikt griestus ar <span class="pill">rampa_maks</span> vai fiksēt skaitu (<span class="pill">rampa = nē</span>).</p></div>
-      <div class="ctl"><div class="ic">➕</div><h3>Pievienot kontaktus</h3><p>Vienkārši pieraksti jaunas rindas cilnē <i>kontakti</i>. Robots tos pamanīs.</p></div>
-      <div class="ctl"><div class="ic">🚫</div><h3>Kādu izlaist</h3><p>Ja cilvēks atsakās, viņa rindā ieraksti <span class="pill">statuss = izslegts</span> — vairs nesūtīs.</p></div>
+  <!-- WHERE EVERYTHING LIVES -->
+  <section id="kur">
+    <h2>Kur viss atrodas</h2>
+    <p class="sub">Sistēma sastāv no dažām daļām, kas savā starpā sarunājas. Lūk, kas kur dzīvo.</p>
+    <div class="infra">
+      <div class="r"><div class="k">⚙️ Kods</div><div class="v">GitHub repo <code>dupitrs/rast-email-sender</code> (privāts) — visu 3 robotu programmas.</div></div>
+      <div class="r"><div class="k">☁️ Roboti darbojas</div><div class="v">GitHub Actions — palaiž kodu pēc grafika GitHub serveros (skat. augstāk).</div></div>
+      <div class="r"><div class="k">📋 Vadība + dati</div><div class="v">Google tabula „RAST kontakti" ar cilnēm <code>kontakti</code>, <code>iestatijumi</code>, <code>log</code>, <code>apstradatas_atbildes</code>.</div></div>
+      <div class="r"><div class="k">🔑 Piekļuves atslēga</div><div class="v">Google Cloud „service account" (<code>rast-bots@…</code>) — ļauj robotam lasīt/rakstīt tabulu. Atslēga glabājas šifrēta.</div></div>
+      <div class="r"><div class="k">📧 Sūta & lasa pastu</div><div class="v">Gmail / Google Workspace <code>raivis@rastdsgn.lv</code> (SMTP sūta, IMAP lasa atbildes).</div></div>
+      <div class="r"><div class="k">📨 Atbildes nonāk</div><div class="v"><code>rast.studija@gmail.com</code> — uz turieni atbilžu bots pārsūta kontaktu atbildes.</div></div>
+      <div class="r"><div class="k">🔒 Slepenās lietas</div><div class="v">GitHub Secrets (šifrētas) — service account atslēga, app parole, tabulas ID. Nekad nav redzamas kodā.</div></div>
+      <div class="r"><div class="k">🌐 Šī lapa</div><div class="v">GitHub Pages no publiska repo <code>dupitrs/rastbotinfo</code>.</div></div>
     </div>
   </section>
 
-  <!-- SAFETY -->
-  <section>
-    <h2>Kāpēc tas ir drošs un gudrs</h2>
-    <p class="sub">Robots ir piesardzīgs — tas neizskatās pēc surogātpasta mašīnas.</p>
-    <ul class="safe">
-      <li><span class="ic">✓</span><div><b>Nekad nesūta dubultā</b><p>Uzreiz atzīmē „nosūtīts", tāpēc tas pats cilvēks nesaņem divas vēstules.</p></div></li>
-      <li><span class="ic">✓</span><div><b>Izklīst pa dienu</b><p>Ne visas uzreiz — pa vienai ar pauzēm, kā to darītu cilvēks.</p></div></li>
-      <li><span class="ic">✓</span><div><b>Tikai darba laikā</b><p>Katru dienu 10–16, nevis naktī. Sākumā maz, tad pakāpeniski vairāk.</p></div></li>
-      <li><span class="ic">✓</span><div><b>Pareizā vēstule katram</b><p>Supervizoriem, psihologiem un mākslas terapeitiem — katram sava, ar vārdu.</p></div></li>
-    </ul>
+  <!-- LIFECYCLE -->
+  <section id="cels">
+    <h2>Viena kontakta ceļš</h2>
+    <p class="sub">No pievienošanas līdz atbildei — kas notiek ar vienu cilvēku tabulā.</p>
+    <div class="life">
+      <div class="st">Pievienots<b>statuss: jauns</b></div>
+      <span class="ar">→</span>
+      <div class="st">Sūtītājs nosūta<b>nosutits</b></div>
+      <span class="ar">→</span>
+      <div class="st">Kontakts atbild<b>iesūtnē</b></div>
+      <span class="ar">→</span>
+      <div class="st">„nē"<b>izslegts</b></div>
+      <span class="ar">/</span>
+      <div class="st">cita atbilde<b>atbildeja + pārsūta</b></div>
+    </div>
   </section>
 
-  <!-- STATS -->
-  <section>
-    <h2>Šī brīža situācija</h2>
+  <!-- USER GUIDE -->
+  <section id="celvedis">
+    <h2>Lietotāja ceļvedis</h2>
+    <p class="sub">Visu vadi <b>Google tabulā</b> (cilne <code>iestatijumi</code>) — nekas nav „jāprogrammē". Izmaiņas stājas spēkā nākamajā robota palaišanā.</p>
+    <div class="guide">
+      <div class="g"><h4>▶️ Ieslēgt / apturēt sūtīšanu</h4><p><span class="pill">aktivs</span> = <span class="pill">jā</span> lai sūta, <span class="pill">nē</span> lai apturētu.</p></div>
+      <div class="g"><h4>⚙️ Mainīt dienas tempu</h4><p>Kāpinājums aug pats (<span class="pill">rampa=jā</span>). Lai fiksētu skaitu: <span class="pill">rampa=nē</span> + <span class="pill">dienas_limits</span>.</p></div>
+      <div class="g"><h4>🧱 Uzlikt maksimumu</h4><p><span class="pill">rampa_maks</span> = piem. <span class="pill">30</span> — augs līdz 30/dienā un paliks.</p></div>
+      <div class="g"><h4>➕ Pievienot kontaktus</h4><p>Jaunas rindas cilnē <span class="pill">kontakti</span>. Robots tos pamanīs.</p></div>
+      <div class="g"><h4>🚫 Izslēgt kādu manuāli</h4><p>Tā rindā <span class="pill">statuss</span> = <span class="pill">izslegts</span>.</p></div>
+      <div class="g"><h4>🌙 Sūtīt arī brīvdienās</h4><p><span class="pill">tikai_darba_dienas</span> = <span class="pill">nē</span> (vai <span class="pill">jā</span> tikai darba dienās).</p></div>
+      <div class="g"><h4>📬 Atbilžu apstrāde</h4><p><span class="pill">atbildu_apstrade</span> = <span class="pill">jā</span>; <span class="pill">parsutit_uz</span> = uz kuru e-pastu pārsūtīt.</p></div>
+      <div class="g"><h4>👀 Sekot līdzi</h4><p>Cilne <span class="pill">log</span> — kas nosūtīts un kad. <span class="pill">apstradatas_atbildes</span> — apstrādātās atbildes.</p></div>
+      <div class="g"><h4>🛟 Ja kaut kas nestrādā</h4><p>Pārbaudi <span class="pill">aktivs=jā</span> un laiku 10–16. GitHub → cilne <b>Actions</b> rāda, vai palaišanas ir zaļas.</p></div>
+    </div>
+  </section>
+
+  <!-- COST & SECURITY -->
+  <section id="izmaksas">
+    <h2>Izmaksas & drošība</h2>
     <div class="stats">
-      <div class="stat"><div class="big">727</div><div class="lbl">kontakti tabulā</div></div>
-      <div class="stat"><div class="big">655</div><div class="lbl">gatavi sūtīšanai</div></div>
-      <div class="stat"><div class="big">5→</div><div class="lbl">e-pasti 1. dienā, tad +1 katru dienu</div></div>
-      <div class="stat"><div class="big">10–16</div><div class="lbl">katru dienu (pēc Rīgas laika)</div></div>
+      <div class="stat"><div class="big">0 €</div><div class="lbl">papildu izmaksas (bezmaksas līmeņi)</div></div>
+      <div class="stat"><div class="big">SPF·DKIM·DMARC</div><div class="lbl">domēna autentifikācija — iestatīta</div></div>
+      <div class="stat"><div class="big">0</div><div class="lbl">kredītkartes (nevar rasties rēķini)</div></div>
     </div>
+    <p class="sub" style="margin-top:18px">Viss balstās uz bezmaksas līmeņiem (GitHub Actions, Google Sheets, GitHub Pages). Slepenās lietas glabājas šifrētas GitHub Secrets, nevis kodā. Vienīgā maksa — esošais Google Workspace e-pasts, kas tev jau bija.</p>
   </section>
 
   <footer>
