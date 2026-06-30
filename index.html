@@ -114,12 +114,12 @@
   <div class="eyebrow">Automātiskais e-pastu sūtītājs</div>
   <h1>Kā strādā <span class="hl">RAST bots</span></h1>
   <p class="lead">Bots pats sūta personalizētus e-pastus potenciālajiem klientiem — pa nedaudziem dienā, darba laikā — kamēr tu dari citas lietas. Tu visu vadi vienā Google tabulā.</p>
-  <div class="status-chip"><span class="dot"></span> Uzstādīts un gatavs · pagaidām miega režīmā (aktivs = nē)</div>
+  <div class="status-chip"><span class="dot"></span> Ieslēgts · sūta katru dienu 10:00–16:00</div>
 
   <!-- TL;DR -->
   <div class="tldr">
     <div class="ic">💡</div>
-    <p><b>Vienkārši sakot:</b> tu ieliec kontaktus Google tabulā un uzliec „sūtīt". Robots katru darba dienu paņem dažus nesūtītos cilvēkus, nosūta katram piemērotu vēstuli, un atzīmē „nosūtīts". Nekādu sarakstu, nekādu pogu spiešanas katru dienu — viss notiek pats.</p>
+    <p><b>Vienkārši sakot:</b> tu ieliec kontaktus Google tabulā un uzliec „sūtīt". Robots katru dienu paņem dažus nesūtītos cilvēkus, nosūta katram piemērotu vēstuli, un atzīmē „nosūtīts". Skaits aug pakāpeniski (5, 6, 7, 8…), lai sargātu reputāciju. Nekādu sarakstu, nekādu pogu spiešanas — viss notiek pats.</p>
   </div>
 
   <!-- FLOW -->
@@ -138,7 +138,7 @@
         <span class="n">2</span>
         <div class="badge">🤖</div>
         <h3>Robots pamostas</h3>
-        <p>Pēc grafika (darba dienās 10–16) robots ielūkojas tabulā un pārbauda noteikumus.</p>
+        <p>Pēc grafika (katru dienu 10–16) robots ielūkojas tabulā un pārbauda noteikumus.</p>
       </div>
       <div class="arrow">→</div>
       <div class="step">
@@ -164,9 +164,9 @@
     <p class="sub">Katru reizi, kad pamostas, robots iziet šo sarakstu. Ja kāds nosacījums neizpildās — tas neko nesūta un mierīgi aiziet gulēt.</p>
     <div class="checks">
       <div class="check"><div class="q">1</div><div><b>Vai sūtīšana ieslēgta?</b><span>Tabulā jābūt „aktivs = jā". Citādi — guļ.</span></div></div>
-      <div class="check"><div class="q">2</div><div><b>Vai šodien ir darba diena?</b><span>Sestdienās un svētdienās nesūta.</span></div></div>
+      <div class="check"><div class="q">2</div><div><b>Vai šodien drīkst sūtīt?</b><span>Pašlaik sūta katru dienu, arī brīvdienās (vajadzības gadījumā var ierobežot tikai uz darba dienām).</span></div></div>
       <div class="check"><div class="q">3</div><div><b>Vai tagad ir 10:00–16:00?</b><span>Sūta tikai cilvēcīgā darba laikā (pēc Rīgas laika).</span></div></div>
-      <div class="check"><div class="q">4</div><div><b>Vai šodien vēl nav sasniegta norma?</b><span>Piem. 5 dienā. Ja jau nosūtīti 5 — apstājas līdz rītdienai.</span></div></div>
+      <div class="check"><div class="q">4</div><div><b>Vai šodien vēl nav sasniegta norma?</b><span>Skaits aug katru dienu: 5, 6, 7, 8… Kad sasniegts — apstājas līdz rītdienai.</span></div></div>
       <div class="check"><div class="q">5</div><div><b>Vai pagājis pietiekami laika kopš pēdējās?</b><span>Tur ~stundu starp vēstulēm, lai izklīstu pa dienu, nevis visas uzreiz.</span></div></div>
       <div class="check final"><div class="q">✓</div><div><b>Viss kārtībā → sūta vienu vēstuli</b><span>Tieši vienu, tad atzīmē un gaida nākamo reizi.</span></div></div>
     </div>
@@ -178,7 +178,7 @@
     <p class="sub">Viss notiek Google tabulā — nekas nav „jāprogrammē". Izmaiņas stājas spēkā nākamajā reizē, kad robots pamostas.</p>
     <div class="grid">
       <div class="ctl"><div class="ic">🟢</div><h3>Ieslēgt / apturēt</h3><p>Cilnē <i>iestatijumi</i>: <span class="pill">aktivs = jā</span> lai sūta, <span class="pill">nē</span> lai apturētu — jebkurā brīdī.</p></div>
-      <div class="ctl"><div class="ic">⚙️</div><h3>Cik dienā</h3><p>Maini <span class="pill">dienas_limits</span> (piem. no 5 uz 10). Vairāk = ātrāk, bet uzmanīgi ar reputāciju.</p></div>
+      <div class="ctl"><div class="ic">⚙️</div><h3>Cik dienā (aug pats)</h3><p>Sākas ar <span class="pill">5</span> un aug <span class="pill">+1</span> katru dienu (warmup). Vari uzlikt griestus ar <span class="pill">rampa_maks</span> vai fiksēt skaitu (<span class="pill">rampa = nē</span>).</p></div>
       <div class="ctl"><div class="ic">➕</div><h3>Pievienot kontaktus</h3><p>Vienkārši pieraksti jaunas rindas cilnē <i>kontakti</i>. Robots tos pamanīs.</p></div>
       <div class="ctl"><div class="ic">🚫</div><h3>Kādu izlaist</h3><p>Ja cilvēks atsakās, viņa rindā ieraksti <span class="pill">statuss = izslegts</span> — vairs nesūtīs.</p></div>
     </div>
@@ -191,7 +191,7 @@
     <ul class="safe">
       <li><span class="ic">✓</span><div><b>Nekad nesūta dubultā</b><p>Uzreiz atzīmē „nosūtīts", tāpēc tas pats cilvēks nesaņem divas vēstules.</p></div></li>
       <li><span class="ic">✓</span><div><b>Izklīst pa dienu</b><p>Ne visas uzreiz — pa vienai ar pauzēm, kā to darītu cilvēks.</p></div></li>
-      <li><span class="ic">✓</span><div><b>Tikai darba laikā</b><p>Darba dienās 10–16, nevis naktī vai brīvdienās.</p></div></li>
+      <li><span class="ic">✓</span><div><b>Tikai darba laikā</b><p>Katru dienu 10–16, nevis naktī. Sākumā maz, tad pakāpeniski vairāk.</p></div></li>
       <li><span class="ic">✓</span><div><b>Pareizā vēstule katram</b><p>Supervizoriem, psihologiem un mākslas terapeitiem — katram sava, ar vārdu.</p></div></li>
     </ul>
   </section>
@@ -202,8 +202,8 @@
     <div class="stats">
       <div class="stat"><div class="big">727</div><div class="lbl">kontakti tabulā</div></div>
       <div class="stat"><div class="big">655</div><div class="lbl">gatavi sūtīšanai</div></div>
-      <div class="stat"><div class="big">5</div><div class="lbl">e-pasti dienā (maināms)</div></div>
-      <div class="stat"><div class="big">10–16</div><div class="lbl">sūtīšanas laiks</div></div>
+      <div class="stat"><div class="big">5→</div><div class="lbl">e-pasti 1. dienā, tad +1 katru dienu</div></div>
+      <div class="stat"><div class="big">10–16</div><div class="lbl">katru dienu (pēc Rīgas laika)</div></div>
     </div>
   </section>
 
