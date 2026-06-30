@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="lv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAST e-pastu bots — kā tas strādā</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0C; --card:#131318; --card2:#17171e;
+    --text:#F4F0E9; --muted:#A7A2AE; --faint:#6E6A77;
+    --accent:#FF4A2E; --line:rgba(244,240,233,.09); --line2:rgba(244,240,233,.14);
+    --ok:#4ADE80;
+    --display:'Bricolage Grotesque','Inter','Helvetica Neue',Arial,sans-serif;
+    --body:'Inter','Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:radial-gradient(1200px 600px at 50% -10%,#16121a 0%,var(--bg) 55%) no-repeat,var(--bg);
+    color:var(--text);font-family:var(--body);line-height:1.6;
+    -webkit-font-smoothing:antialiased;padding:0 18px;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:56px 0 80px}
+  .logo{font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:-.02em}
+  .logo span{color:var(--accent)}
+  .eyebrow{color:var(--accent);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin:38px 0 10px}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(34px,6vw,56px);line-height:1.08;letter-spacing:-.02em;margin-bottom:18px}
+  h1 .hl{color:var(--accent)}
+  .lead{font-size:clamp(17px,2.4vw,21px);color:var(--muted);max-width:680px}
+  h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,4vw,32px);letter-spacing:-.01em;margin-bottom:6px}
+  h2 .num{color:var(--accent);margin-right:10px}
+  section{margin-top:64px}
+  .sub{color:var(--muted);margin-bottom:26px;max-width:680px}
+
+  /* TL;DR */
+  .tldr{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line2);
+    border-radius:20px;padding:26px 28px;margin-top:32px;display:flex;gap:18px;align-items:flex-start}
+  .tldr .ic{font-size:30px;line-height:1}
+  .tldr b{color:var(--text)}
+  .tldr p{color:var(--muted);font-size:17px}
+
+  /* Flow */
+  .flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:14px;margin-top:8px}
+  .step{flex:1 1 200px;background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:24px 22px;position:relative;min-width:200px}
+  .step .badge{width:42px;height:42px;border-radius:12px;background:rgba(255,74,46,.12);
+    border:1px solid rgba(255,74,46,.35);display:flex;align-items:center;justify-content:center;
+    font-size:22px;margin-bottom:14px}
+  .step .n{position:absolute;top:18px;right:20px;font-family:var(--display);font-weight:700;
+    font-size:30px;color:rgba(244,240,233,.10)}
+  .step h3{font-family:var(--display);font-weight:600;font-size:18px;margin-bottom:6px}
+  .step p{color:var(--muted);font-size:14.5px}
+  .arrow{align-self:center;color:var(--accent);font-size:24px;flex:0 0 auto}
+  @media(max-width:760px){.arrow{transform:rotate(90deg);align-self:center;width:100%;text-align:center}}
+  .loopnote{margin-top:16px;color:var(--faint);font-size:14px;display:flex;align-items:center;gap:8px}
+  .loopnote .lp{color:var(--accent)}
+
+  /* Decision checklist */
+  .checks{display:grid;grid-template-columns:1fr;gap:10px;counter-reset:c}
+  .check{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:16px 18px}
+  .check .q{width:30px;height:30px;border-radius:9px;background:rgba(74,222,128,.10);
+    border:1px solid rgba(74,222,128,.3);color:var(--ok);display:flex;align-items:center;justify-content:center;
+    font-weight:700;flex:0 0 auto;font-size:15px}
+  .check b{display:block;font-size:15.5px}
+  .check span{color:var(--muted);font-size:14px}
+  .checks .final{border-color:rgba(255,74,46,.35);background:rgba(255,74,46,.06)}
+  .checks .final .q{background:rgba(255,74,46,.14);border-color:rgba(255,74,46,.4);color:var(--accent)}
+
+  /* Control cards */
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}}
+  .ctl{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .ctl .ic{font-size:24px;margin-bottom:10px}
+  .ctl h3{font-family:var(--display);font-weight:600;font-size:17px;margin-bottom:5px}
+  .ctl p{color:var(--muted);font-size:14.5px}
+  .pill{display:inline-block;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;
+    background:rgba(244,240,233,.06);border:1px solid var(--line2);border-radius:7px;
+    padding:2px 9px;color:var(--text);margin:0 2px}
+
+  /* Safety */
+  .safe{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:680px){.safe{grid-template-columns:1fr}}
+  .safe li{list-style:none;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:18px 20px;display:flex;gap:12px;align-items:flex-start}
+  .safe .ic{color:var(--ok);font-size:18px;flex:0 0 auto;margin-top:2px}
+  .safe b{font-size:15px}
+  .safe p{color:var(--muted);font-size:14px;margin-top:2px}
+
+  /* Stats */
+  .stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px}
+  .stat{flex:1 1 150px;background:linear-gradient(180deg,var(--card2),var(--card));
+    border:1px solid var(--line);border-radius:16px;padding:22px 24px;text-align:center}
+  .stat .big{font-family:var(--display);font-weight:700;font-size:40px;color:var(--accent);line-height:1}
+  .stat .lbl{color:var(--muted);font-size:13.5px;margin-top:8px}
+
+  footer{margin-top:72px;padding-top:28px;border-top:1px solid var(--line);
+    color:var(--faint);font-size:13.5px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  footer .tag{font-style:italic}
+  .status-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(74,222,128,.08);
+    border:1px solid rgba(74,222,128,.3);color:var(--ok);border-radius:100px;padding:6px 14px;
+    font-size:13px;font-weight:600;margin-top:22px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(74,222,128,.15)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="logo">rast<span>.</span></div>
+
+  <div class="eyebrow">Automātiskais e-pastu sūtītājs</div>
+  <h1>Kā strādā <span class="hl">RAST bots</span></h1>
+  <p class="lead">Bots pats sūta personalizētus e-pastus potenciālajiem klientiem — pa nedaudziem dienā, darba laikā — kamēr tu dari citas lietas. Tu visu vadi vienā Google tabulā.</p>
+  <div class="status-chip"><span class="dot"></span> Uzstādīts un gatavs · pagaidām miega režīmā (aktivs = nē)</div>
+
+  <!-- TL;DR -->
+  <div class="tldr">
+    <div class="ic">💡</div>
+    <p><b>Vienkārši sakot:</b> tu ieliec kontaktus Google tabulā un uzliec „sūtīt". Robots katru darba dienu paņem dažus nesūtītos cilvēkus, nosūta katram piemērotu vēstuli, un atzīmē „nosūtīts". Nekādu sarakstu, nekādu pogu spiešanas katru dienu — viss notiek pats.</p>
+  </div>
+
+  <!-- FLOW -->
+  <section>
+    <h2>Kā tas notiek — 4 soļi</h2>
+    <p class="sub">Šis cikls atkārtojas pats no sevis, kamēr tabulā ir nesūtīti kontakti.</p>
+    <div class="flow">
+      <div class="step">
+        <span class="n">1</span>
+        <div class="badge">📋</div>
+        <h3>Google tabula</h3>
+        <p>Tu pievieno kontaktus un uzliec „aktīvs = jā". Tā ir tava vadības pults.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <span class="n">2</span>
+        <div class="badge">🤖</div>
+        <h3>Robots pamostas</h3>
+        <p>Pēc grafika (darba dienās 10–16) robots ielūkojas tabulā un pārbauda noteikumus.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <span class="n">3</span>
+        <div class="badge">✉️</div>
+        <h3>Sūta vienu vēstuli</h3>
+        <p>Paņem nākamo nesūtīto, izvēlas pareizo vēstuli pēc profesijas, personalizē ar vārdu un nosūta.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <span class="n">4</span>
+        <div class="badge">✅</div>
+        <h3>Atzīmē „nosūtīts"</h3>
+        <p>Ieraksta tabulā statusu un datumu, lai tam pašam cilvēkam nesūtītu otrreiz.</p>
+      </div>
+    </div>
+    <div class="loopnote"><span class="lp">↻</span> …un pēc brīža atkal no 1. soļa — līdz dienas norma sasniegta vai visi nosūtīti.</div>
+  </section>
+
+  <!-- DECISION -->
+  <section>
+    <h2>Kā robots izlemj, vai sūtīt</h2>
+    <p class="sub">Katru reizi, kad pamostas, robots iziet šo sarakstu. Ja kāds nosacījums neizpildās — tas neko nesūta un mierīgi aiziet gulēt.</p>
+    <div class="checks">
+      <div class="check"><div class="q">1</div><div><b>Vai sūtīšana ieslēgta?</b><span>Tabulā jābūt „aktivs = jā". Citādi — guļ.</span></div></div>
+      <div class="check"><div class="q">2</div><div><b>Vai šodien ir darba diena?</b><span>Sestdienās un svētdienās nesūta.</span></div></div>
+      <div class="check"><div class="q">3</div><div><b>Vai tagad ir 10:00–16:00?</b><span>Sūta tikai cilvēcīgā darba laikā (pēc Rīgas laika).</span></div></div>
+      <div class="check"><div class="q">4</div><div><b>Vai šodien vēl nav sasniegta norma?</b><span>Piem. 5 dienā. Ja jau nosūtīti 5 — apstājas līdz rītdienai.</span></div></div>
+      <div class="check"><div class="q">5</div><div><b>Vai pagājis pietiekami laika kopš pēdējās?</b><span>Tur ~stundu starp vēstulēm, lai izklīstu pa dienu, nevis visas uzreiz.</span></div></div>
+      <div class="check final"><div class="q">✓</div><div><b>Viss kārtībā → sūta vienu vēstuli</b><span>Tieši vienu, tad atzīmē un gaida nākamo reizi.</span></div></div>
+    </div>
+  </section>
+
+  <!-- CONTROL -->
+  <section>
+    <h2>Ko tu vari kontrolēt</h2>
+    <p class="sub">Viss notiek Google tabulā — nekas nav „jāprogrammē". Izmaiņas stājas spēkā nākamajā reizē, kad robots pamostas.</p>
+    <div class="grid">
+      <div class="ctl"><div class="ic">🟢</div><h3>Ieslēgt / apturēt</h3><p>Cilnē <i>iestatijumi</i>: <span class="pill">aktivs = jā</span> lai sūta, <span class="pill">nē</span> lai apturētu — jebkurā brīdī.</p></div>
+      <div class="ctl"><div class="ic">⚙️</div><h3>Cik dienā</h3><p>Maini <span class="pill">dienas_limits</span> (piem. no 5 uz 10). Vairāk = ātrāk, bet uzmanīgi ar reputāciju.</p></div>
+      <div class="ctl"><div class="ic">➕</div><h3>Pievienot kontaktus</h3><p>Vienkārši pieraksti jaunas rindas cilnē <i>kontakti</i>. Robots tos pamanīs.</p></div>
+      <div class="ctl"><div class="ic">🚫</div><h3>Kādu izlaist</h3><p>Ja cilvēks atsakās, viņa rindā ieraksti <span class="pill">statuss = izslegts</span> — vairs nesūtīs.</p></div>
+    </div>
+  </section>
+
+  <!-- SAFETY -->
+  <section>
+    <h2>Kāpēc tas ir drošs un gudrs</h2>
+    <p class="sub">Robots ir piesardzīgs — tas neizskatās pēc surogātpasta mašīnas.</p>
+    <ul class="safe">
+      <li><span class="ic">✓</span><div><b>Nekad nesūta dubultā</b><p>Uzreiz atzīmē „nosūtīts", tāpēc tas pats cilvēks nesaņem divas vēstules.</p></div></li>
+      <li><span class="ic">✓</span><div><b>Izklīst pa dienu</b><p>Ne visas uzreiz — pa vienai ar pauzēm, kā to darītu cilvēks.</p></div></li>
+      <li><span class="ic">✓</span><div><b>Tikai darba laikā</b><p>Darba dienās 10–16, nevis naktī vai brīvdienās.</p></div></li>
+      <li><span class="ic">✓</span><div><b>Pareizā vēstule katram</b><p>Supervizoriem, psihologiem un mākslas terapeitiem — katram sava, ar vārdu.</p></div></li>
+    </ul>
+  </section>
+
+  <!-- STATS -->
+  <section>
+    <h2>Šī brīža situācija</h2>
+    <div class="stats">
+      <div class="stat"><div class="big">727</div><div class="lbl">kontakti tabulā</div></div>
+      <div class="stat"><div class="big">655</div><div class="lbl">gatavi sūtīšanai</div></div>
+      <div class="stat"><div class="big">5</div><div class="lbl">e-pasti dienā (maināms)</div></div>
+      <div class="stat"><div class="big">10–16</div><div class="lbl">sūtīšanas laiks</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Raivis, RAST studija · raivis@rastdsgn.lv</div>
+    <div class="tag">„rast" — atrast un radīt.</div>
+  </footer>
+
+</div>
+</body>
+</html>
