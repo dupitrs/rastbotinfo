@@ -261,7 +261,7 @@
       <div><span class="b">6</span> Atbilde nonāk Gmail iesūtnē.</div>
       <div><span class="b">7</span> Atbilžu bots izlasa iesūtni (IMAP).</div>
       <div><span class="b">8</span> Ja atbilde nav "nē" → pārsūta uz rast.studija@gmail.com.</div>
-      <div><span class="b">9</span> Atzīmē statusu tabulā (izslegts vai atbildeja).</div>
+      <div><span class="b">9</span> Atzīmē tabulā <b>atbildeja</b>; ja atbilde bija „nē" — arī <code>situacija</code> = „atbildēja: nē".</div>
     </div>
   </section>
 
@@ -288,7 +288,7 @@
         <div>
           <h3>2. Atbilžu bots</h3>
           <div class="file">replies_job.py</div>
-          <p>Lasa Gmail iesūtni un reaģē uz kontaktu atbildēm. Atbild „nē" → atzīmē <b>izslegts</b> (vairs nesūtīs). Atbild ko citu → atzīmē <b>atbildeja</b> un <b>pārsūta vēstuli uz rast.studija@gmail.com</b>. Aiztiek tikai zināmus kontaktus; neapstrādā divreiz; izlaiž atvaļinājuma auto-atbildes.</p>
+          <p>Lasa Gmail iesūtni un reaģē uz kontaktu atbildēm. <b>Jebkura atbilde</b> → statuss <b>atbildeja</b> (tam cilvēkam vairs neko nesūtīs, arī follow-up ne). Ja atbilde ir „nē" → nepārsūta un kolonnā <code>situacija</code> pieraksta „atbildēja: nē"; citādi <b>pārsūta vēstuli uz rast.studija@gmail.com</b>. Aiztiek tikai zināmus kontaktus; neapstrādā divreiz; izlaiž atvaļinājuma auto-atbildes.</p>
           <div class="meta">
             <span><b>Kad:</b> reizi stundā, 24/7</span>
             <span><b>Kur:</b> GitHub Actions</span>
@@ -358,7 +358,7 @@
       <span class="ar">→</span>
       <div class="st">Kontakts atbild<b>iesūtnē</b></div>
       <span class="ar">→</span>
-      <div class="st">„nē"<b>izslegts</b></div>
+      <div class="st">„nē"<b>atbildeja (klusi)</b></div>
       <span class="ar">/</span>
       <div class="st">cita atbilde<b>atbildeja + pārsūta</b></div>
     </div>
@@ -373,7 +373,8 @@
       <div class="g"><h4>⚙️ Mainīt dienas tempu</h4><p>Kāpinājums aug pats (<span class="pill">rampa=jā</span>). Lai fiksētu skaitu: <span class="pill">rampa=nē</span> + <span class="pill">dienas_limits</span>.</p></div>
       <div class="g"><h4>🧱 Uzlikt maksimumu</h4><p><span class="pill">rampa_maks</span> = piem. <span class="pill">30</span> — augs līdz 30/dienā un paliks.</p></div>
       <div class="g"><h4>➕ Pievienot kontaktus</h4><p>Jaunas rindas cilnē <span class="pill">kontakti</span>. Robots tos pamanīs.</p></div>
-      <div class="g"><h4>🚫 Izslēgt kādu manuāli</h4><p>Tā rindā <span class="pill">statuss</span> = <span class="pill">izslegts</span>.</p></div>
+      <div class="g"><h4>🚫 Izslēgt kādu manuāli</h4><p>Tā rindā <span class="pill">statuss</span> = <span class="pill">atbildeja</span>.</p></div>
+      <div class="g"><h4>📝 Piezīmes par atbildētājiem</h4><p>Kolonna <span class="pill">situacija</span> cilnē <span class="pill">kontakti</span> — tava brīvā teksta kolonna (ko sarunājāt, kas tālāk). Bots tur raksta tikai „atbildēja: nē".</p></div>
       <div class="g"><h4>🌙 Sūtīt arī brīvdienās</h4><p><span class="pill">tikai_darba_dienas</span> = <span class="pill">nē</span> (vai <span class="pill">jā</span> tikai darba dienās).</p></div>
       <div class="g"><h4>📬 Atbilžu apstrāde</h4><p><span class="pill">atbildu_apstrade</span> = <span class="pill">jā</span>; <span class="pill">parsutit_uz</span> = uz kuru e-pastu pārsūtīt.</p></div>
       <div class="g"><h4>🔁 Atkārtotā ziņa (follow-up)</h4><p><span class="pill">followup</span> = <span class="pill">jā</span>/<span class="pill">nē</span>; <span class="pill">followup_dienas</span> = pēc cik dienām bez atbildes (tagad 7).</p></div>
