@@ -185,7 +185,7 @@
         <!-- Sūtītājs -->
         <rect class="dg-box dg-acc" x="352" y="92" width="150" height="56" rx="12"></rect>
         <text class="dg-t" x="427" y="116" text-anchor="middle">⏰ Sūtītājs</text>
-        <text class="dg-s" x="427" y="133" text-anchor="middle">katru dienu 10–16</text>
+        <text class="dg-s" x="427" y="133" text-anchor="middle">katru dienu 9–16</text>
         <!-- Gmail (send) -->
         <rect class="dg-box" x="676" y="92" width="120" height="56" rx="12"></rect>
         <text class="dg-t" x="736" y="116" text-anchor="middle">📧 Gmail</text>
@@ -274,9 +274,9 @@
         <div>
           <h3>1. Sūtītājs</h3>
           <div class="file">sender_job.py</div>
-          <p>Galvenais robots. Katrā palaišanā paņem <b>nākamo nesūtīto</b> kontaktu, izvēlas pareizo vēstuli pēc profesijas, personalizē ar vārdu, nosūta un atzīmē „nosūtīts". Sūta pa vienam ar pauzēm; dienas skaits pakāpeniski aug (5, 6, 7, 8…), lai sargātu reputāciju.</p>
+          <p>Galvenais robots. Katrā palaišanā paņem <b>nākamo nesūtīto</b> kontaktu, izvēlas pareizo vēstuli pēc profesijas, personalizē ar vārdu, nosūta un atzīmē „nosūtīts". Ja pēc nedēļas atbildes nav, nosūta <b>īsu atgādinājumu (follow-up)</b> tajā pašā sarunā — tikai vienu reizi. Sūta pa vienam ar pauzēm; dienas skaits pakāpeniski aug (7, 8, 9…), lai sargātu reputāciju.</p>
           <div class="meta">
-            <span><b>Kad:</b> katru dienu, 10:00–16:00, ~ik stundu viens</span>
+            <span><b>Kad:</b> katru dienu, 9:00–16:00, ~ik stundu viens</span>
             <span><b>Kur:</b> GitHub Actions</span>
             <span><b>Aiztiek:</b> tabula + Gmail (sūta)</span>
           </div>
@@ -335,7 +335,7 @@
     <div class="infra">
       <div class="r"><div class="k">⚙️ Kods</div><div class="v">GitHub repo <code>dupitrs/rast-email-sender</code> (privāts) — visu 3 robotu programmas.</div></div>
       <div class="r"><div class="k">☁️ Roboti darbojas</div><div class="v">GitHub Actions — palaiž kodu pēc grafika GitHub serveros (skat. augstāk).</div></div>
-      <div class="r"><div class="k">📋 Vadība + dati</div><div class="v">Google tabula „RAST kontakti" ar cilnēm <code>kontakti</code>, <code>iestatijumi</code>, <code>log</code>, <code>apstradatas_atbildes</code>.</div></div>
+      <div class="r"><div class="k">📋 Vadība + dati</div><div class="v">Google tabula „RAST kontakti" ar cilnēm <code>kontakti</code>, <code>iestatijumi</code>, <code>log</code>, <code>apstradatas_atbildes</code>, <code>bez epastiem</code>.</div></div>
       <div class="r"><div class="k">🔑 Piekļuves atslēga</div><div class="v">Google Cloud „service account" (<code>rast-bots@…</code>) — ļauj robotam lasīt/rakstīt tabulu. Atslēga glabājas šifrēta.</div></div>
       <div class="r"><div class="k">📧 Sūta & lasa pastu</div><div class="v">Gmail / Google Workspace <code>raivis@rastdsgn.lv</code> (SMTP sūta, IMAP lasa atbildes).</div></div>
       <div class="r"><div class="k">📨 Atbildes nonāk</div><div class="v"><code>rast.studija@gmail.com</code> — uz turieni atbilžu bots pārsūta kontaktu atbildes.</div></div>
@@ -352,6 +352,8 @@
       <div class="st">Pievienots<b>statuss: jauns</b></div>
       <span class="ar">→</span>
       <div class="st">Sūtītājs nosūta<b>nosutits</b></div>
+      <span class="ar">→</span>
+      <div class="st">Nedēļa bez atbildes<b>follow-up tajā pašā sarunā</b></div>
       <span class="ar">→</span>
       <div class="st">Kontakts atbild<b>iesūtnē</b></div>
       <span class="ar">→</span>
@@ -373,8 +375,9 @@
       <div class="g"><h4>🚫 Izslēgt kādu manuāli</h4><p>Tā rindā <span class="pill">statuss</span> = <span class="pill">izslegts</span>.</p></div>
       <div class="g"><h4>🌙 Sūtīt arī brīvdienās</h4><p><span class="pill">tikai_darba_dienas</span> = <span class="pill">nē</span> (vai <span class="pill">jā</span> tikai darba dienās).</p></div>
       <div class="g"><h4>📬 Atbilžu apstrāde</h4><p><span class="pill">atbildu_apstrade</span> = <span class="pill">jā</span>; <span class="pill">parsutit_uz</span> = uz kuru e-pastu pārsūtīt.</p></div>
+      <div class="g"><h4>🔁 Atkārtotā ziņa (follow-up)</h4><p><span class="pill">followup</span> = <span class="pill">jā</span>/<span class="pill">nē</span>; <span class="pill">followup_dienas</span> = pēc cik dienām bez atbildes (tagad 7).</p></div>
       <div class="g"><h4>👀 Sekot līdzi</h4><p>Cilne <span class="pill">log</span> — kas nosūtīts un kad. <span class="pill">apstradatas_atbildes</span> — apstrādātās atbildes.</p></div>
-      <div class="g"><h4>🛟 Ja kaut kas nestrādā</h4><p>Pārbaudi <span class="pill">aktivs=jā</span> un laiku 10–16. GitHub → cilne <b>Actions</b> rāda, vai palaišanas ir zaļas.</p></div>
+      <div class="g"><h4>🛟 Ja kaut kas nestrādā</h4><p>Pārbaudi <span class="pill">aktivs=jā</span> un laiku 9–16. GitHub → cilne <b>Actions</b> rāda, vai palaišanas ir zaļas.</p></div>
     </div>
   </section>
 
